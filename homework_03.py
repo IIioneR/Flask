@@ -7,30 +7,28 @@ app = Flask('app')
 
 @app.route("/file")
 def show_file():
-    list = []
     with open("requirements.txt", "r") as file:
         data = str(file.readlines()).replace("\\n", "<br>")
-        list.append(data)
 
-        return str(list).replace(",", "")
+        return data
 
 
 @app.route("/csv")
 def checker_csv():
     with open("hw.csv", 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        csv_iter = csv_reader
-        next(csv_iter)
+        csv_reader = csv.DictReader(csv_file)
         total1 = 0
         total2 = 0
         line_count = 0
         for line in csv_reader:
+            print(line)
             if line:
                 line_count += 1
-                total1 += float(line[1])
-                total2 += float(line[2])
-
-    return str("Avarage weigth: {}, Avarage growth: {}".format(total1 / line_count, total2 / line_count))
+                total1 += float(line[' \"Height(Inches)\"'])
+                total2 += float(line[' \"Weight(Pounds)\"'])
+        result1 = str((total1 / line_count) * 2.54 )
+        result2 = str((total2 / line_count) * 0.45359237)
+    return "Avarage Height (sm): {}, Avarage Weitght (kg): {} ".format(result1, result2)
 
 
 @app.route("/users")
@@ -40,8 +38,10 @@ def fake_users():
     for i in range(1, 101):
         name = fake_data.name()
         email = fake_data.safe_email()
-        list.append("user: " + str(i) + " name: " + name + " email: " + email + "<br>")
-    return str(list).replace(",", "")
+        list.append(("user: " + str(i)) + (" name: " + name) + (" email: " + email) + "<br>")
+    x = " ".join(list)
+
+    return str(x)
 
 
 app.run()
