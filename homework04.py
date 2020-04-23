@@ -32,4 +32,25 @@ def gen_password():
     return "wrong lenght or format lenght"
 
 
+@app.route("/get-cust")
+def get_customers():
+    DEFAUL_STATE = ""
+    DEFAULT_CITY = ""
+    state = request.args.get('state', DEFAUL_STATE)
+    city = request.args.get('city', DEFAULT_CITY)
+    query = f'select FirstName, LastName, State, City from customers where State = "{state}" or City = "{city}"'
+    records = execute_query(query)
+    result = '<br>'.join([str(record) for record in records])
+    return result
+
+
+def execute_query(query):
+    db_path = os.path.join(os.getcwd(), 'chinook.db')
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    cur.execute(query)
+    records = cur.fetchall()
+    return records
+
+
 app.run()
