@@ -52,5 +52,16 @@ def execute_query(query):
     records = cur.fetchall()
     return records
 
+@app.route("/get-cust-count")
+def get_customers_count():
+    query = f'select FirstName from customers'
+    records = execute_query(query)
+    result = '<br>'.join([str(record) for record in records])
+    count = 0
+    result = set(result)
+    for line in result:
+        count += 1
+    return str(count)
+
 
 app.run()
