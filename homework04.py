@@ -63,5 +63,14 @@ def get_customers_count():
         count += 1
     return str(count)
 
+@app.route("/get-inv-items")
+def get_invoice_items():
+    query = f'select UnitPrice, Quantity from invoice_items'
+    records = execute_query(query)
+    total = 0
+    for line in records:
+        total += (line[0]*line[1])
+    return str(f"Total invoice: {total}")
+
 
 app.run()
