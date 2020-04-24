@@ -26,9 +26,9 @@ def gen_password():
                 ])
             elif digits == 1 or digits == "":
                 return ''.join([
-                random.choice(string.hexdigits)
-                for _ in range(int(length))
-            ])
+                    random.choice(string.hexdigits)
+                    for _ in range(int(length))
+                ])
     return "wrong lenght or format lenght"
 
 
@@ -52,6 +52,7 @@ def execute_query(query):
     records = cur.fetchall()
     return records
 
+
 @app.route("/get-cust-count")
 def get_customers_count():
     query = f'select FirstName from customers'
@@ -63,13 +64,14 @@ def get_customers_count():
         count += 1
     return str(count)
 
+
 @app.route("/get-inv-items")
 def get_invoice_items():
     query = f'select UnitPrice, Quantity from invoice_items'
     records = execute_query(query)
     total = 0
     for line in records:
-        total += (line[0]*line[1])
+        total += (line[0] * line[1])
     return str(f"Total invoice: {total}")
 
 
