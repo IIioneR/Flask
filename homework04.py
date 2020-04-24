@@ -16,20 +16,14 @@ def gen_password():
     DEFAUL_LENGHT = 10
     DEFAULT_DIG = 0
     length = request.args.get('length', DEFAUL_LENGHT)
-    digits = int(request.args.get('dig', DEFAULT_DIG))
-    if str(length).isnumeric():
-        if 8 <= int(length) <= 24:
-            if digits == 0:
-                return ''.join([
-                    random.choice(string.ascii_lowercase)
-                    for _ in range(int(length))
-                ])
-            elif digits == 1 or digits == "":
-                return ''.join([
-                    random.choice(string.hexdigits)
-                    for _ in range(int(length))
-                ])
-    return "wrong lenght or format lenght"
+    digits = request.args.get('dig', DEFAULT_DIG)
+    if str(length).isnumeric() and str(digits).isnumeric():
+        if 8 <= int(length) <= 24 and 0 <= int(digits) <= 1:
+            gen_symbols = string.ascii_letters + string.digits if digits else string.ascii_letters
+            return ''.join([
+                random.choice(gen_symbols) for _ in range(int(length))
+            ])
+    return "wrong lenght or format lenght, or wrong digits"
 
 
 @app.route("/get-cust")
@@ -55,14 +49,10 @@ def execute_query(query):
 
 @app.route("/get-cust-count")
 def get_customers_count():
-    query = f'select FirstName from customers'
+    query = f'select count(DISTINCT FirstName) from customers'
     records = execute_query(query)
     result = '<br>'.join([str(record) for record in records])
-    count = 0
-    result = set(result)
-    for line in result:
-        count += 1
-    return str(count)
+    return f"Count distinct users = {str(result).replace(',', '')}"
 
 
 @app.route("/get-inv-items")
@@ -72,7 +62,7 @@ def get_invoice_items():
     total = 0
     for line in records:
         total += (line[0] * line[1])
-    return str(f"Total invoice: {total}")
+    return str(f"Total invoice: {int(total*100)/100}")
 
 
 app.run()
