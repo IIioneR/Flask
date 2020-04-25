@@ -18,12 +18,15 @@ def gen_password():
     length = request.args.get('length', DEFAUL_LENGHT)
     digits = request.args.get('dig', DEFAULT_DIG)
     if str(length).isnumeric() and str(digits).isnumeric():
-        if 8 <= int(length) <= 24 and 0 <= int(digits) <= 1:
-            gen_symbols = string.ascii_letters + string.digits if digits else string.ascii_letters
-            return ''.join([
-                random.choice(gen_symbols) for _ in range(int(length))
-            ])
-    return "wrong lenght or format lenght, or wrong digits"
+        if 8 <= int(length) <= 24:
+            if 0 <= int(digits) <= 1:
+                gen_symbols = string.ascii_letters + string.digits if digits else string.ascii_letters
+                return ''.join([
+                    random.choice(gen_symbols) for _ in range(int(length))
+                ])
+            return "digit must be 1(on_numeric) or 0(of_numeric)"
+        return "lenght must be >=8 and <=24"
+    return "wrong type of lenght or digit, both of them must be numeric"
 
 
 @app.route("/get-cust")
@@ -51,8 +54,7 @@ def execute_query(query):
 def get_customers_count():
     query = f'select count(DISTINCT FirstName) from customers'
     records = execute_query(query)
-    result = '<br>'.join([str(record) for record in records])
-    return f"Count distinct users = {str(result).replace(',', '')}"
+    return f"Count distinct users = {records[0][0]}"
 
 
 @app.route("/get-inv-items")
